@@ -1,0 +1,75 @@
+ 
+ 
+use global_asset;
+ 
+#region
+INSERT INTO Region (Water_Access, Air_access, Land_access, Accessibility, RegionName) VALUES
+('Yes', 'Yes', 'Yes', 'Open',       'North America'),
+('Yes', 'Yes', 'Yes', 'Open',       'Europe'),
+('Yes', 'Yes', 'Yes', 'Restricted', 'Asia'),
+('No',  'Yes', 'Yes', 'Restricted', 'Middle East'),
+('Yes', 'Yes', 'Yes', 'Moderate',   'Africa');
+ 
+#country
+INSERT INTO country (CountryName, CountryRegion, CountryAgencies) VALUES
+('USA',     'North America', 'CIA'),
+('UK',      'Europe',        'MI6'),
+('Germany', 'Europe',        NULL),
+('Russia',  'Europe',        'FSB'),
+('China',   'Asia',          'MSS'),
+('Iran',    'Middle East',   NULL),
+('France',  'Europe',        'DGSE'),
+('Israel',  'Middle East',   'Mossad'),
+('Egypt',   'Africa',        NULL),
+('Japan',   'Asia',          NULL);
+ 
+#ways_of_contact 
+INSERT INTO Ways_of_Contact (DesignatedPlace, Secure_Droppoff, Telecommunication, Visual_Confirmation) VALUES
+('Park Bench',    'Hollow tree',      'Burner phone',        'Red scarf'),
+('Safe House',    'Locked cabinet',   'Encrypted email',     'Passphrase'),
+('Cafe',          'Under table',      'Encrypted messaging', 'Newspaper'),
+('Train Station', 'Locker 42',        'Burner phone',        'Blue umbrella'),
+('Embassy Annex', 'Diplomatic pouch', 'Secure line',         'Badge check'),
+('Hotel Lobby',   'Room safe',        'Secure line',         'Folded map'),
+('Library',       'Book return slot', 'Encrypted messaging', 'Yellow folder');
+ 
+#agency
+INSERT INTO Agency (AgencyName, AgencyCountries, Contact_Place, Allies, Adversaries) VALUES
+('CIA',    'USA',    'Safe House',    'MI6', 'FSB'),
+('MI6',    'UK',     'Embassy Annex', 'CIA', 'FSB'),
+('FSB',    'Russia', 'Park Bench',    'MSS', 'CIA'),
+('MSS',    'China',  'Cafe',          'FSB', 'CIA'),
+('DGSE',   'France', 'Hotel Lobby',   'MI6', 'FSB'),
+('Mossad', 'Israel', 'Library',       'CIA', 'MSS');
+ 
+#asset
+INSERT INTO Asset (AssetID, AssetName, AssetCountry, AssetWays_of_Contact, AssetValue, AssetConnection) VALUES
+(1,  'Victor', 'Russia',  'Park Bench',    'High',   'Government contact'),
+(2,  'Ellen',  'Germany', 'Cafe',          'Medium', 'Embassy staff'),
+(3,  'Faith',  'Iran',    'Train Station', 'High',   'Nuclear technician'),
+(4,  'May',    'China',   'Cafe',          'High',   'Telecom engineer'),
+(5,  'Daniel', 'USA',     'Park Bench',    'Medium', 'Defense contractor'),
+(6,  'Claire', 'UK',      'Train Station', 'Low',    'Civil servant'),
+(7,  'Kevin',  'Egypt',   'Hotel Lobby',   'High',   'Military officer'),
+(8,  'Harry',  'Japan',   'Library',       'Low',    'Business executive'),
+(9,  'Sam',    'Russia',  'Cafe',          'Medium', 'Bank clerk'),
+(10, 'Lisa',   'Iran',    'Library',       'High',   'University professor');
+ 
+#agent 
+INSERT INTO Agent (AgentID, AgentName, AgentAssets, AgentWays_of_Contact, AgentAgency) VALUES
+(1,  'John Smith',     1,  'Safe House',     'CIA'),
+(2,  'Mary Allen',     3,  'Train Station',  'CIA'),
+(3,  'James Whitby',   2,  'Embassy Annex',  'MI6'),
+(4,  'Olivia Hart',    4,  'Cafe',           'MI6'),
+(5,  'Evan Peters',    5,  'Park Bench',     'FSB'),
+(6,  'Will Chambers',  6,  'Cafe',           'MSS'),
+(7,  'Chris Davis',    7,  'Hotel Lobby',    'DGSE'),
+(8,  'Rachel Cohen',   10, 'Library',        'Mossad'),
+(9,  'Tom Becker',     9,  'Cafe',           'CIA'),
+(10, 'Amy Tanner',     8,  'Train Station',  'MI6');
+ 
+ 
+ 
+ 
+ 
+ 
