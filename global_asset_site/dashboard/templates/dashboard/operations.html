@@ -1,0 +1,25 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Operations · Global Asset Management{% endblock %}
+{% block content %}
+<h1>Operations overview</h1>
+<p class="sub">Every asset with its location, handler and meeting place, read from the <code>v_operations</code> view. The Risk column comes from the <code>fn_asset_risk()</code> function.</p>
+<div class="panel">
+  <div class="table-wrap">
+    <table>
+      <thead><tr>{% for c in columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+      <tbody>
+      {% for row in rows %}
+        <tr>
+          {% for cell in row %}
+            {% if forloop.counter == 6 %}<td class="risk-{{ cell }}">{{ cell }}</td>
+            {% elif cell is None %}<td><span class="null">NULL</span></td>
+            {% else %}<td>{{ cell }}</td>{% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="count">{{ rows|length }} asset{{ rows|length|pluralize }}</div>
+</div>
+{% endblock %}

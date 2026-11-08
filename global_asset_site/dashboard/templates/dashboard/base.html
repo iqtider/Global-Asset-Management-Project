@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Global Asset Management{% endblock %}</title>
+  <style>
+    :root {
+      --bg: #f4f5f7; --panel: #ffffff; --ink: #1d2330; --muted: #5d6677; --line: #dde1e8;
+      --accent: #1f4e8c; --accent-soft: #e6eef8; --side: #151b26; --side-ink: #c9d1df;
+      --ok: #1d7a46; --ok-soft: #e4f4ea; --bad: #b3261e; --bad-soft: #fbe9e7; --warn: #9a6200; --warn-soft: #fdf1dc;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+    .layout { display: flex; min-height: 100vh; }
+    nav { width: 230px; flex-shrink: 0; background: var(--side); color: var(--side-ink); padding: 20px 0; }
+    nav .brand { color: #fff; font-weight: 700; font-size: 17px; padding: 0 20px 18px; letter-spacing: .3px; }
+    nav .brand small { display: block; font-weight: 400; color: #8a94a8; font-size: 12px; margin-top: 2px; }
+    nav h4 { margin: 18px 20px 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #7c869a; }
+    nav a { display: block; padding: 7px 20px; color: var(--side-ink); text-decoration: none; font-size: 14px; }
+    nav a:hover, nav a.active { background: #232c3d; color: #fff; }
+    main { flex: 1; padding: 28px 36px; min-width: 0; }
+    h1 { margin: 0 0 6px; font-size: 24px; }
+    .sub { color: var(--muted); margin: 0 0 22px; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; margin-bottom: 20px; }
+    .panel h2 { margin: 0 0 12px; font-size: 16px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+    .stat .n { font-size: 28px; font-weight: 700; }
+    .stat .l { color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    th { background: #f0f2f6; font-weight: 600; }
+    tr:hover td { background: #fafbfc; }
+    .null { color: #a0a7b4; font-style: italic; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+    .card { display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; text-decoration: none; color: inherit; }
+    .card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(31,78,140,.12); }
+    .card .num { color: var(--accent); font-weight: 700; font-size: 13px; }
+    .card .t { font-weight: 600; margin: 3px 0 6px; }
+    .card .p { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    .tag { display: inline-block; background: var(--accent-soft); color: var(--accent); border-radius: 4px; padding: 2px 7px; font-size: 12px; font-weight: 600; }
+    pre { background: #10151f; color: #d7e0ee; padding: 14px 16px; border-radius: 6px; overflow-x: auto; font-size: 13px; line-height: 1.45; margin: 0; }
+    .btn { display: inline-block; background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 8px 14px; font-size: 14px; cursor: pointer; text-decoration: none; }
+    .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .between { justify-content: space-between; }
+    select, input { padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; font-size: 14px; background: #fff; }
+    label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    .form-grid input, .form-grid select { width: 100%; }
+    .alert { padding: 10px 14px; border-radius: 6px; margin-bottom: 18px; font-size: 14px; }
+    .alert.ok { background: var(--ok-soft); color: var(--ok); }
+    .alert.bad { background: var(--bad-soft); color: var(--bad); }
+    .risk-Critical { color: var(--bad); font-weight: 700; }
+    .risk-Elevated { color: var(--warn); font-weight: 600; }
+    .risk-Routine { color: var(--ok); }
+    .count { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    .hint { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+    @media (max-width: 760px) {
+      .layout { flex-direction: column; }
+      nav { width: 100%; padding: 12px 0; }
+      main { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <div class="brand">Global Asset Mgmt<small>Intelligence asset database</small></div>
+    <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'query_list' %}" class="{% if request.resolver_match.url_name == 'query_list' or request.resolver_match.url_name == 'query_detail' %}active{% endif %}">Queries</a>
+    <a href="{% url 'operations' %}" class="{% if request.resolver_match.url_name == 'operations' %}active{% endif %}">Operations (view)</a>
+    <a href="{% url 'manage' %}" class="{% if request.resolver_match.url_name == 'manage' %}active{% endif %}">Manage assets</a>
+    <h4>Tables</h4>
+    {% for t in tables %}
+      <a href="{% url 'table_view' t %}" class="{% if table == t %}active{% endif %}">{{ t }}</a>
+    {% endfor %}
+  </nav>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>

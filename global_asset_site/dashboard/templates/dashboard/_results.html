@@ -1,0 +1,13 @@
+<div class="table-wrap">
+  <table>
+    <thead><tr>{% for c in columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>{% for cell in row %}<td>{% if cell is None %}<span class="null">NULL</span>{% else %}{{ cell }}{% endif %}</td>{% endfor %}</tr>
+    {% empty %}
+      <tr><td colspan="{{ columns|length|default:1 }}" class="null">No rows returned</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="count">{{ rows|length }} row{{ rows|length|pluralize }}</div>

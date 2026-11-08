@@ -1,0 +1,9 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ table }} · Global Asset Management{% endblock %}
+{% block content %}
+<h1>{{ table }}</h1>
+<p class="sub">All rows in the <code>{{ table }}</code> table.</p>
+<div class="panel">
+  {% include "dashboard/_results.html" %}
+</div>
+{% endblock %}

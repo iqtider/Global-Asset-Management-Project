@@ -1,0 +1,16 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Queries · Global Asset Management{% endblock %}
+{% block content %}
+<h1>Queries</h1>
+<p class="sub">Each query answers a real operational question. Click one to run it.</p>
+<div class="cards">
+  {% for q in queries %}
+    <a class="card" href="{% url 'query_detail' q.number %}">
+      <div class="num">Query {{ q.number }}</div>
+      <div class="t">{{ q.title }}</div>
+      <div class="p">{{ q.problem|capfirst }}</div>
+      <span class="tag">{{ q.techniques }}</span>
+    </a>
+  {% endfor %}
+</div>
+{% endblock %}

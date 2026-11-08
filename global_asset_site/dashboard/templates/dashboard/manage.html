@@ -1,0 +1,50 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Manage assets · Global Asset Management{% endblock %}
+{% block content %}
+<h1>Manage assets</h1>
+<p class="sub">Add assets and reassign agents. These forms use the database's stored procedure and triggers.</p>
+
+{% if message %}<div class="alert ok">{{ message }}</div>{% endif %}
+{% if error %}<div class="alert bad"><strong>Rejected by the database:</strong> {{ error }}</div>{% endif %}
+
+<div class="panel">
+  <h2>Add a new asset <span class="tag">trigger: trg_asset_value_check</span></h2>
+  <p class="hint">The trigger rejects any value other than High, Medium or Low. Try typing "Extreme" to see it block the insert.</p>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="add_asset">
+    <div class="form-grid">
+      <div><label>Name</label><input name="name" required maxlength="255"></div>
+      <div><label>Country</label><select name="country">{% for c in countries %}<option>{{ c }}</option>{% endfor %}</select></div>
+      <div><label>Meeting place</label><select name="place">{% for p in places %}<option>{{ p }}</option>{% endfor %}</select></div>
+      <div><label>Value</label><input name="value" list="values" required maxlength="50" placeholder="High, Medium or Low">
+        <datalist id="values"><option>High</option><option>Medium</option><option>Low</option></datalist></div>
+      <div><label>Connection</label><input name="connection" maxlength="255" placeholder="e.g. Port official"></div>
+    </div>
+    <button class="btn" type="submit">Add asset</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Reassign an agent <span class="tag">procedure: sp_assign_asset</span> <span class="tag">trigger: trg_agent_reassign</span></h2>
+  <p class="hint">The procedure refuses if the asset already has a handler. Add a new asset above first, then assign an agent to it.</p>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="assign">
+    <div class="form-grid">
+      <div><label>Agent</label><select name="agent">
+        {% for id, name, agency, asset in agents %}<option value="{{ id }}">{{ name }} ({{ agency }}) – now: {{ asset|default:"none" }}</option>{% endfor %}
+      </select></div>
+      <div><label>New asset</label><select name="asset">
+        {% for id, name, country, handler in assets %}<option value="{{ id }}">{{ name }}, {{ country }} – {% if handler %}handled by {{ handler }}{% else %}no handler{% endif %}</option>{% endfor %}
+      </select></div>
+    </div>
+    <button class="btn" type="submit">Assign</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Assignment log <span class="tag">written by trg_agent_reassign</span></h2>
+  {% with columns=log_columns rows=log_rows %}{% include "dashboard/_results.html" %}{% endwith %}
+</div>
+{% endblock %}

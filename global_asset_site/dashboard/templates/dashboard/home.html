@@ -1,0 +1,35 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<h1>Dashboard</h1>
+<p class="sub">Overview of agencies, agents and assets in the <code>global_asset</code> database.</p>
+
+<div class="stats">
+  {% for label, n in counts.items %}
+    <div class="stat"><div class="n">{{ n }}</div><div class="l">{{ label }}</div></div>
+  {% endfor %}
+</div>
+
+<div class="panel">
+  <h2>Asset risk levels <span class="tag">fn_asset_risk()</span></h2>
+  <p class="hint">Critical = high value asset in a restricted region. Calculated by the stored function.</p>
+  <div class="row">
+    {% for risk, n in risk_rows %}
+      <div class="stat"><div class="n risk-{{ risk }}">{{ n }}</div><div class="l">{{ risk }}</div></div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="panel">
+  <div class="row between"><h2>Queries</h2><a class="btn ghost" href="{% url 'query_list' %}">See all {{ queries|length }}</a></div>
+  <div class="cards">
+    {% for q in queries|slice:":6" %}
+      <a class="card" href="{% url 'query_detail' q.number %}">
+        <div class="num">Query {{ q.number }}</div>
+        <div class="t">{{ q.title }}</div>
+        <div class="p">{{ q.problem|capfirst }}</div>
+        <span class="tag">{{ q.techniques }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

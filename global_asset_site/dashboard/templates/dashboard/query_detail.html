@@ -1,0 +1,37 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ query.title }} · Global Asset Management{% endblock %}
+{% block content %}
+<div class="row between">
+  <div>
+    <div class="tag">Query {{ query.number }} · {{ query.techniques }}</div>
+    <h1 style="margin-top:8px">{{ query.title }}</h1>
+  </div>
+  <div class="row">
+    {% if prev %}<a class="btn ghost" href="{% url 'query_detail' prev.number %}">&larr; Prev</a>{% endif %}
+    {% if next %}<a class="btn ghost" href="{% url 'query_detail' next.number %}">Next &rarr;</a>{% endif %}
+  </div>
+</div>
+<p class="sub">{{ query.problem|capfirst }}</p>
+
+{% if query.param %}
+<div class="panel">
+  <form method="get" class="row">
+    <label for="value" style="margin:0">{{ query.param.label }}</label>
+    <select id="value" name="value" onchange="this.form.submit()">
+      {% for opt in options %}<option value="{{ opt }}" {% if opt == chosen %}selected{% endif %}>{{ opt }}</option>{% endfor %}
+    </select>
+    <noscript><button class="btn" type="submit">Run</button></noscript>
+  </form>
+</div>
+{% endif %}
+
+<div class="panel">
+  <h2>Results</h2>
+  {% include "dashboard/_results.html" %}
+</div>
+
+<div class="panel">
+  <h2>SQL</h2>
+  <pre>{{ query.sql }}</pre>
+</div>
+{% endblock %}
