@@ -54,7 +54,7 @@ DATABASES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_MAX_ATTEMPTS = 3
-LOGIN_LOCKOUT_SECONDS = 300
+LOGIN_LOCKOUT_SECONDS = 60
 
 USE_TZ = False
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
