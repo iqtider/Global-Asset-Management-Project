@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from django.db import DatabaseError, connection
 from django.http import Http404
 from django.shortcuts import redirect, render
-
+from .auth import login_required
 from .queries import QUERIES
 
 QUERIES_BY_NUMBER = {q["number"]: q for q in QUERIES}
@@ -34,7 +34,7 @@ def error_message(exc):
     args = getattr(exc, "args", ())
     return args[1] if len(args) > 1 else str(exc)
 
-
+@login_required
 def home(request):
     counts = {}
     for label, table in [("Agencies", "Agency"), ("Agents", "Agent"), ("Assets", "Asset"),
