@@ -1,5 +1,5 @@
 {% extends "dashboard/base.html" %}
-{% block title %}Sign in - Global Asset Management{% endblock %}
+{% block title %}Sign in - Global Asset Management Agency{% endblock %}
 {% block body %}
 <style>
   .lg-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px;
@@ -42,7 +42,7 @@
         <circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"></path>
       </svg>
     </div>
-    <div class="lg-eyebrow">Global Asset Management</div>
+    <div class="lg-eyebrow">Global Asset Management Agency</div>
 
     {% if admin_name %}
       <h1>Hi {{ admin_name }}</h1>
@@ -50,7 +50,7 @@
         <span class="lg-chip">{{ admin_email }}</span></p>
     {% else %}
       <h1>Sign in</h1>
-      <p class="lg-sub">Authorized personnel only. Enter your agency email address.</p>
+      <p class="lg-sub">Enter your agency email address.</p>
     {% endif %}
 
     {% if error %}
@@ -95,8 +95,6 @@
       </div>
     {% endif %}
 
-    <div class="lg-foot">{{ max_attempts }} wrong tries lock this form for {{ lockout_seconds }} seconds. You are signed out when you close the browser.</div>
-  </div>
 </div>
 
 {% if locked %}
