@@ -84,4 +84,3 @@ else:
 
 USE_TZ = False
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-print("EMAIL BACKEND:", EMAIL_BACKEND)
