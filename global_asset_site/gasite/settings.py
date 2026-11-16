@@ -1,4 +1,4 @@
-"""Settings for the Global Asset Management demo site.
+"""Settings for the Global Asset Management site.
 
 Database login comes from environment variables, with defaults for a local MySQL:
   DB_NAME (global_asset), DB_USER (root), DB_PASSWORD (empty), DB_HOST (127.0.0.1), DB_PORT (3306)
@@ -8,7 +8,6 @@ from pathlib import Path
 
 import pymysql
 
-# PyMySQL stands in for mysqlclient, which is hard to install on Windows.
 pymysql.version_info = (2, 2, 7, "final", 0)
 pymysql.install_as_MySQLdb()
 
@@ -54,7 +53,34 @@ DATABASES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_MAX_ATTEMPTS = 3
-LOGIN_LOCKOUT_SECONDS = 60
+LOGIN_LOCKOUT_SECONDS = 30
+
+# Adding admin emails to login as ADMIN
+ADMIN_USERS = {
+    "tayloraustin@globalasset.com": {"name": "Agent Austin", "password": "falcon;71"},
+    "iqtidertaseen@globalasset.com": {"name": "Agent Taseen", "password": "harbor;24"},
+    "avilajose@globalasset.com": {"name": "Agent Jose", "password": "cedar;58"},
+}
+
+# "Forgot password?" sends a note to this person
+SUPERVISOR_EMAIL = "supervisor@globalasset.com"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "Global Asset Mgmt <no-reply@globalasset.com>"
+
+SUPERVISOR_EMAIL = "iqtidertaseen@gmail.com"      # supervisor email
+
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER", "")         
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD", "") 
+if EMAIL_HOST_USER:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "smtp.gmail.com"
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_TIMEOUT = 10
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    DEFAULT_FROM_EMAIL = "no-reply@globalasset.com"
 
 USE_TZ = False
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

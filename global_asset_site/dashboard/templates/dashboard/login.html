@@ -1,32 +1,115 @@
 {% extends "dashboard/base.html" %}
-{% block title %}Sign in · Global Asset Management{% endblock %}
+{% block title %}Sign in - Global Asset Management{% endblock %}
 {% block body %}
-<div class="login-wrap">
-  
-<div class="login-card">
-    
-<h1>Global Asset Mgmt</h1>
-    
-<p class="sub">Demo sign-in: enter any valid email address. No password needed.</p>
-    
-{% if error %}<div class="alert bad">{{ error }}</div>{% endif %}
-    
-<form method="post">
-      
-{% csrf_token %}
-      
-<input type="hidden" name="next" value="{{ next }}">
-      
-<label for="email">Email address</label>
-      
-<input id="email" name="email" type="text" autocomplete="email" placeholder="name@example.com"
-             
-{% if locked %}disabled{% else %}autofocus{% endif %}>
-      
-<button class="btn" type="submit" {% if locked %}disabled{% endif %}>Sign in</button>
-    
-</form>
-  
+<style>
+  .lg-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px;
+    color: #e7edf7; background-color: #0a101b;
+    background-image:
+      radial-gradient(ellipse 70% 55% at 50% 0%, rgba(46, 124, 214, .28), transparent 70%),
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: auto, 44px 44px, 44px 44px; }
+  .lg-card { width: 100%; max-width: 400px; background: rgba(18, 26, 40, .92); border: 1px solid #263349;
+    border-radius: 14px; padding: 32px 30px 26px; box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+  .lg-mark { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(140deg, #2e7cd6, #1b4f93); margin-bottom: 18px; }
+  .lg-eyebrow { font-family: Consolas, "Courier New", monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #6fa8e8; }
+  .lg-card h1 { font-size: 24px; margin: 6px 0 6px; color: #fff; }
+  .lg-sub { color: #9aa8bd; font-size: 14px; margin: 0 0 20px; line-height: 1.45; }
+  .lg-sub strong { color: #fff; }
+  .lg-chip { display: inline-block; margin-top: 8px; padding: 3px 9px; border-radius: 999px; background: #1a2740; border: 1px solid #2b3b56; color: #c6d3e6; font-size: 12px; }
+  .lg-card label { color: #9aa8bd; font-size: 12px; letter-spacing: .4px; margin-bottom: 6px; }
+  .lg-card input[type=text], .lg-card input[type=password] { width: 100%; padding: 11px 12px; margin-bottom: 16px; font-size: 15px;
+    color: #fff; background: #0d1522; border: 1px solid #2b3b56; border-radius: 8px; outline: none; }
+  .lg-card input:focus { border-color: #4d9bf0; box-shadow: 0 0 0 3px rgba(77,155,240,.22); }
+  .lg-card input::placeholder { color: #5a6980; }
+  .lg-card input:disabled { opacity: .45; }
+  .lg-btn { width: 100%; padding: 11px; font-size: 15px; font-weight: 600; color: #fff; border: 0; border-radius: 8px; cursor: pointer;
+    background: linear-gradient(140deg, #2e7cd6, #2261ad); }
+  .lg-btn:hover { filter: brightness(1.1); }
+  .lg-btn:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+  .lg-error { background: rgba(214, 69, 60, .14); border: 1px solid rgba(214, 69, 60, .45); color: #ffb4ad; border-radius: 8px; padding: 10px 12px; font-size: 14px; margin-bottom: 16px; }
+  .lg-notice { background: rgba(60, 170, 110, .14); border: 1px solid rgba(60, 170, 110, .45); color: #a9e6c3; border-radius: 8px; padding: 10px 12px; font-size: 14px; margin-bottom: 16px; }
+  .lg-links { display: flex; justify-content: space-between; }
+  .lg-back { background: none; border: 0; padding: 0; margin-top: 14px; color: #6fa8e8; font-size: 13px; cursor: pointer; text-decoration: underline; }
+  .lg-foot { margin-top: 22px; padding-top: 14px; border-top: 1px solid #223049; color: #6c7a90; font-size: 12px; line-height: 1.5; }
+</style>
+
+<div class="lg-page">
+  <div class="lg-card">
+    <div class="lg-mark">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round">
+        <circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"></path>
+      </svg>
+    </div>
+    <div class="lg-eyebrow">Global Asset Management</div>
+
+    {% if admin_name %}
+      <h1>Hi {{ admin_name }}</h1>
+      <p class="lg-sub">Enter your password to continue.<br>
+        <span class="lg-chip">{{ admin_email }}</span></p>
+    {% else %}
+      <h1>Sign in</h1>
+      <p class="lg-sub">Authorized personnel only. Enter your agency email address.</p>
+    {% endif %}
+
+    {% if error %}
+      <div class="lg-error">{{ error }}
+        {% if locked %}Try again in <strong id="lg-count">{{ seconds_left }}</strong> seconds.{% endif %}
+      </div>
+    {% endif %}
+
+    {% if notice %}<div class="lg-notice">{{ notice }}</div>{% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% if admin_name %}
+        <input type="hidden" name="step" value="password">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password"
+               {% if locked %}disabled{% else %}autofocus{% endif %}>
+        <button class="lg-btn" type="submit" {% if locked %}disabled{% endif %}>Sign in</button>
+      {% else %}
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="text" autocomplete="email" placeholder="name@example.com"
+               {% if locked %}disabled{% else %}autofocus{% endif %}>
+        <button class="lg-btn" type="submit" {% if locked %}disabled{% endif %}>Continue</button>
+      {% endif %}
+    </form>
+
+    {% if admin_name %}
+      <div class="lg-links">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}">
+          <input type="hidden" name="step" value="forgot">
+          <button class="lg-back" type="submit" {% if locked %}disabled{% endif %}>Forgot password?</button>
+        </form>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}">
+          <input type="hidden" name="step" value="restart">
+          <button class="lg-back" type="submit">Use a different email</button>
+        </form>
+      </div>
+    {% endif %}
+
+    <div class="lg-foot">{{ max_attempts }} wrong tries lock this form for {{ lockout_seconds }} seconds. You are signed out when you close the browser.</div>
+  </div>
 </div>
-</div>
+
+{% if locked %}
+<script>
+  // Count the lock down, then reload so the form opens again.
+  (function () {
+    var left = {{ seconds_left }}, el = document.getElementById("lg-count");
+    var timer = setInterval(function () {
+      left -= 1;
+      if (left <= 0) { clearInterval(timer); window.location.href = window.location.href; return; }
+      el.textContent = left;
+    }, 1000);
+  })();
+</script>
+{% endif %}
 {% endblock %}
