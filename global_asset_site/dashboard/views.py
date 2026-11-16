@@ -51,11 +51,11 @@ def home(request):
         "tables": TABLES,
     })
 
-
+@login_required
 def query_list(request):
     return render(request, "dashboard/query_list.html", {"queries": QUERIES, "tables": TABLES})
 
-
+@login_required
 def query_detail(request, number):
     query = QUERIES_BY_NUMBER.get(number)
     if query is None:
@@ -81,7 +81,7 @@ def query_detail(request, number):
         "tables": TABLES,
     })
 
-
+@login_required
 def operations(request):
     columns, rows = run_sql(
         "SELECT AssetName, AssetValue, AssetCountry, CountryRegion, Accessibility, "
@@ -90,7 +90,7 @@ def operations(request):
     )
     return render(request, "dashboard/operations.html", {"columns": columns, "rows": rows, "tables": TABLES})
 
-
+@login_required
 def table_view(request, table):
     if table not in TABLES:
         raise Http404("No such table")
@@ -99,7 +99,7 @@ def table_view(request, table):
         "table": table, "columns": columns, "rows": rows, "tables": TABLES,
     })
 
-
+@login_required
 def manage(request):
     """Add an asset (checked by trg_asset_value_check) and reassign agents (sp_assign_asset + trg_agent_reassign)."""
     message, error = request.GET.get("ok"), None

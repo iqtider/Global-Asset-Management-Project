@@ -63,11 +63,14 @@ def login_view(request):
             admin = ADMIN_USERS[email]
             try:
                 send_mail(
-                    subject=f"Password help needed: {admin['name']}",
+                    subject="Change of password needed",
                     message=(
-                        f"{admin['name']} ({email}) forgot their password.\n\n"
-                        "No password was reset. Please contact this agent and "
-                        "give them a new password in person.\n\n"
+                        "Hi Supervisor,\n\n"
+                        f"This is to notify you that {admin['name']} has reported a forgotten password for their Global Asset Management system."
+                        " For security reasons, no password has been reset or sent electronically. The agent has been asked to meet "
+                        "you in person to receive a new password.\n\n"
+                        "With regards,\n"
+                        "Global Asset Management Team"
                     ),
                     from_email=None,
                     recipient_list=[settings.SUPERVISOR_EMAIL],
