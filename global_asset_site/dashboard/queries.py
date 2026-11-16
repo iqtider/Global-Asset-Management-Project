@@ -230,4 +230,127 @@ WHERE c1.CountryRegion = c2.CountryRegion
 ORDER BY SharedRegion, Agent1, Agent2;
 """,
     },
+    {
+        "number": 16,
+        "title": 'Shifted Agent and Assets',
+        "problem": 'agent assets and meeting places shifted across rows for operational deception.',
+        "techniques": 'JOIN, Window functions (LEAD, LAG)',
+        "param": None,
+        "sql": """
+SELECT 
+    ag.AgentID,
+    ag.AgentName,
+    -- Shift the Asset ID down by 1 row
+    LEAD(ag.AgentAssets, 1, ag.AgentAssets) OVER (ORDER BY ag.AgentID) AS False_AgentAssets,
+    -- Shift the Ways of Contact up by 1 row
+    LAG(a.AssetWays_of_Contact, 1, a.AssetWays_of_Contact) OVER (ORDER BY ag.AgentID) AS False_AgentWays_of_Contact,
+    ag.AgentAgency
+FROM Agent ag
+LEFT JOIN Asset a ON ag.AgentAssets = a.AssetID
+ORDER BY ag.AgentID;
+""",
+    },
+{
+        "number": 17,
+        "title": 'True Agent Operations',
+        "problem": 'baseline view of agents, their assigned assets, and their meeting places.',
+        "techniques": 'JOIN',
+        "param": None,
+        "sql": """
+SELECT 
+    ag.AgentID,
+    ag.AgentName,
+    ag.AgentAssets,
+    a.AssetWays_of_Contact AS AgentWays_of_Contact,
+    ag.AgentAgency
+FROM Agent ag
+LEFT JOIN Asset a ON ag.AgentAssets = a.AssetID
+ORDER BY ag.AgentID;
+""",
+    },
+    {
+            "number": 18,
+            "title": 'Side-by-side agent operations comparison',
+            "problem": 'compare true agent assets and meeting places directly against their shifted deceptive counterparts.',
+            "techniques": 'JOIN, CTEs, Window functions (LEAD, LAG)',
+            "param": None,
+            "sql": """
+    WITH true_ops AS (
+        SELECT 
+            ag.AgentID,
+            ag.AgentName,
+            ag.AgentAssets,
+            a.AssetWays_of_Contact AS AgentWays_of_Contact,
+            ag.AgentAgency
+        FROM Agent ag
+        LEFT JOIN Asset a ON ag.AgentAssets = a.AssetID
+    ),
+    false_ops AS (
+        SELECT 
+            ag.AgentID,
+            LEAD(ag.AgentAssets, 1, ag.AgentAssets) OVER (ORDER BY ag.AgentID) AS False_AgentAssets,
+            LAG(a.AssetWays_of_Contact, 1, a.AssetWays_of_Contact) OVER (ORDER BY ag.AgentID) AS False_AgentWays_of_Contact
+        FROM Agent ag
+        LEFT JOIN Asset a ON ag.AgentAssets = a.AssetID
+    )
+    SELECT 
+        t.AgentID,
+        t.AgentName,
+        t.AgentAssets AS True_Asset,
+        t.AgentWays_of_Contact AS True_MeetingPlace,
+        f.False_AgentAssets AS False_Asset,
+        f.False_AgentWays_of_Contact AS False_MeetingPlace,
+        t.AgentAgency
+    FROM true_ops t
+    JOIN false_ops f ON t.AgentID = f.AgentID
+    ORDER BY t.AgentID;
+    """,
+        },
+        {
+            "number": 19,
+            "title": 'Randomized Agent-Asset ID Shuffling',
+            "problem": 'independently randomize agents and assets using cryptographic salts to compare randomized asset IDs against true assigned asset IDs.',
+            "techniques": 'WITH (CTE), ROW_NUMBER(), SHA2(), CONCAT(), JOIN',
+            "param": None,
+            "sql": """
+            WITH ShuffledAgents AS (
+                SELECT 
+                    AgentID,
+                    AgentName,
+                    AgentAssets AS True_AssetID,
+                    -- Independently randomize agents using a unique salt
+                    ROW_NUMBER() OVER (ORDER BY SHA2(CONCAT(AgentID, 'agent_shuffle_salt'), 256)) AS r_agent
+                FROM Agent
+            ),
+            ShuffledAssets AS (
+                SELECT 
+                    AssetID,
+                    -- Independently randomize assets using a different salt
+                    ROW_NUMBER() OVER (ORDER BY SHA2(CONCAT(AssetID, 'asset_shuffle_salt'), 256)) AS r_asset
+                FROM Asset
+            )
+            SELECT 
+                sa.AgentName,
+                ast_shuffled.AssetID AS Randomized_Asset_ID,  -- True randomized shuffle ID (no fixed shift)
+                sa.True_AssetID AS True_Asset_ID              -- What the true asset ID really is
+            FROM ShuffledAgents sa
+            -- Pair the independently shuffled lists together by their random row numbers
+            JOIN ShuffledAssets ast_shuffled ON sa.r_agent = ast_shuffled.r_asset;
+            """,
+        },
+        {
+        "number": 20,
+        "title": 'Mission Debriefing',
+        "problem": 'display a final closing banner for the operational briefing.',
+        "techniques": 'SELECT, UNION ALL, String literals',
+        "param": None,
+        "sql": """
+        SELECT '          ████████╗██╗  ██╗ █████╗ ███╗   ██╗██╗  ██╗    ██╗   ██╗ ██████╗ ██╗   ██╗██╗' AS `MISSION COMPLETE`
+        UNION ALL SELECT '╚══██╔══╝██║  ██║██╔══██╗████╗  ██║██║ ██╔╝    ╚██╗ ██╔╝██╔═══██╗██║   ██║██║'
+        UNION ALL SELECT '   ██║   ███████║███████║██╔██╗ ██║█████╔╝      ╚████╔╝ ██║   ██║██║   ██║██║'
+        UNION ALL SELECT '   ██║   ██╔══██║██╔══██║██║╚██╗██║██╔═██╗       ╚██╔╝  ██║   ██║██║   ██║╚═╝'
+        UNION ALL SELECT '   ██║   ██║  ██║██║  ██║██║ ╚████║██║  ██╗       ██║   ╚██████╔╝╚██████╔╝██╗'
+        UNION ALL SELECT '   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝       ╚═╝    ╚═════╝  ╚═════╝ ╚═╝';
+        """,
+            },
 ]

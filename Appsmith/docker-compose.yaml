@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  appsmith:
+    image: index.docker.io/appsmith/appsmith-ce:latest
+    container_name: appsmith
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./stacks:/appsmith-stacks
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - APPSMITH_INSTANCE_ID=appsmith-local-01
