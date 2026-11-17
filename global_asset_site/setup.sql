@@ -55,6 +55,7 @@ create table Asset(
     AssetWays_of_Contact varchar(50),
     AssetValue varchar(50),
     AssetConnection varchar(255),
+    foreign key (AssetCountry) references country(CountryName),
     foreign key (AssetWays_of_Contact) references Ways_of_Contact(DesignatedPlace)
 );    
  
