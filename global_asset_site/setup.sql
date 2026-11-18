@@ -1,9 +1,4 @@
--- One-file setup for the website: tables, sample data, view, function, procedure and triggers.
--- Run it in MySQL Workbench (File > Run SQL Script) or: mysql -u root -p < setup.sql
--- WARNING: it drops and recreates the global_asset database.
-
--- Your create_tables.sql. Only change: 'references Country(' -> 'references country(' (line 38),
--- because MySQL on Linux treats table names as case-sensitive and the original fails there (Windows is fine).
+-- Builds the database structure
 DROP DATABASE IF EXISTS global_asset;
 CREATE DATABASE global_asset;
 
