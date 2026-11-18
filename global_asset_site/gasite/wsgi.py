@@ -1,3 +1,5 @@
+# Entry point a web server uses to run the site
+
 import os
 
 from django.core.wsgi import get_wsgi_application

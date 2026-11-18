@@ -8,7 +8,7 @@ from .queries import QUERIES
 
 QUERIES_BY_NUMBER = {q["number"]: q for q in QUERIES}
 
-# Tables a visitor may browse, with the column to sort by.
+# Tables a visitor may browse
 TABLES = {
     "Region": "RegionName",
     "country": "CountryName",
@@ -30,7 +30,7 @@ def run_sql(sql, params=None):
 
 
 def error_message(exc):
-    # MySQL errors arrive as (code, message); show only the message.
+    # MySQL error message
     args = getattr(exc, "args", ())
     return args[1] if len(args) > 1 else str(exc)
 

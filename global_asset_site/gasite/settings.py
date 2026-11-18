@@ -1,6 +1,8 @@
-"""Settings for the Global Asset Management site.
-
-Database login comes from environment variables, with defaults for a local MySQL:
+"""Configurations for the Global Asset Management site: 
+    database connection, 
+    admin accounts, 
+    email setup, 
+    and login rules
   DB_NAME (global_asset), DB_USER (root), DB_PASSWORD (empty), DB_HOST (127.0.0.1), DB_PORT (3306)
 """
 import os
